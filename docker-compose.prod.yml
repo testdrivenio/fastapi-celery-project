@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+
+   nginx:
+      build: ./compose/production/nginx
+      volumes:
+         - uploadfiles:/app/upload
+      ports:
+         - 80:80
+         - 5559:5555
+         - 15672:15672
+      depends_on:
+         - web
+         - flower
+
+   web:
+      build:
+         context: .
+         dockerfile: ./compose/production/fastapi/Dockerfile
+      command: /start
+      volumes:
+
+         - uploadfiles:/app/upload
+      env_file:
+         - ./.env/.prod-sample
+      depends_on:
+         - redis
+         - db
+         - rabbitmq
+
+   db:
+      image: postgres:13-alpine
+      volumes:
+         - postgres_data:/var/lib/postgresql/data/
+      environment:
+         - POSTGRES_DB=fastapi_celery
+         - POSTGRES_USER=fastapi_celery
+         - POSTGRES_PASSWORD=fastapi_celery
+
+   redis:
+      image: redis:6-alpine
+
+   rabbitmq:
+      image: rabbitmq:3-management
+      env_file:
+         - ./.env/.prod-sample
+
+   celery_worker:
+      build:
+         context: .
+         dockerfile: ./compose/production/fastapi/Dockerfile
+      image: fastapi_celery_example_celery_worker
+      command: /start-celeryworker
+      volumes:
+         - uploadfiles:/app/upload
+      env_file:
+         - ./.env/.prod-sample
+      depends_on:
+         - redis
+         - db
+         - rabbitmq
+
+   celery_beat:
+      build:
+         context: .
+         dockerfile: ./compose/production/fastapi/Dockerfile
+      image: fastapi_celery_example_celery_beat
+      command: /start-celerybeat
+      volumes:
+         - uploadfiles:/app/upload
+      env_file:
+         - ./.env/.prod-sample
+      depends_on:
+         - redis
+         - db
+         - rabbitmq
+
+   flower:
+      build:
+         context: .
+         dockerfile: ./compose/production/fastapi/Dockerfile
+      image: fastapi_celery_example_celery_flower
+      command: /start-flower
+      volumes:
+         - uploadfiles:/app/upload
+         - flower_db:/app/flower_db
+      env_file:
+         - ./.env/.prod-sample
+      depends_on:
+         - redis
+         - db
+
+   prometheus:
+      image: prom/prometheus
+      ports:
+         - 9090:9090
+      command:
+         - --config.file=/etc/prometheus/prometheus.yml
+      volumes:
+         - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      depends_on:
+         - cadvisor
+
+   cadvisor:
+      image: google/cadvisor
+      container_name: cadvisor
+      volumes:
+         - /:/rootfs:ro
+         - /var/run:/var/run:rw
+         - /sys:/sys:ro
+         - /var/lib/docker/:/var/lib/docker:ro
+         - /var/run/docker.sock:/var/run/docker.sock:ro
+
+volumes:
+   postgres_data:
+   uploadfiles:
+   flower_db:

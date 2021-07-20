@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Celery example</title>
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css"
+    integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  />
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-md-4">
+        <form id="your-form">
+          <div class="mb-3">
+            <label for="email" class="form-label">Email address</label>
+            <input type="email" class="form-control" id="email" name="email">
+          </div>
+          <div class="mb-3">
+            <label for="username" class="form-label">Username</label>
+            <input type="text" class="form-control" id="username" name="username">
+          </div>
+          <div class="mb-3" id="messages"></div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bootstrap.min.js"
+    integrity="sha512-EKWWs1ZcA2ZY9lbLISPz8aGR2+L7JVYqBAYTq5AXgBkSjRSuQEGqWx8R1zAX16KdXPaCjOCaKE8MCpU0wcHlHA=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer">
+  </script>
+
+  <script
+    type="text/javascript"
+    src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js">
+  </script>
+
+  <script>
+    function update_progress(yourForm, task_id, btnHtml) {
+      // use namespace
+      const socket = io('/task_status', {'path': '/ws/socket.io'});
+
+      socket.on('connect', function () {
+        socket.emit('join', {'task_id': `${task_id}`});
+      });
+      socket.on('status', function (res) {
+        const taskStatus = res.state;
+
+        if (taskStatus !== 'PENDING' && taskStatus !== 'PROGRESS') {
+          const msg = yourForm.querySelector('#messages');
+          const submitBtn = yourForm.querySelector('button[type="submit"]');
+
+          if (taskStatus === 'SUCCESS') {
+            msg.innerHTML = 'job succeeded';
+          } else if (taskStatus === 'FAILURE') {
+            msg.innerHTML = res.error;
+          }
+
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = btnHtml;
+          // close the websocket because we do not need it now
+          socket.close();
+        }
+
+      });
+    }
+
+    function serialize(data) {
+      let obj = {};
+      for (let [key, value] of data) {
+        if (obj[key] !== undefined) {
+          if (!Array.isArray(obj[key])) {
+            obj[key] = [obj[key]];
+          }
+          obj[key].push(value);
+        } else {
+          obj[key] = value;
+        }
+      }
+      return obj;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const yourForm = document.getElementById("your-form");
+      yourForm.addEventListener("submit", function (event) {
+        event.preventDefault();
+        const submitBtn = yourForm.querySelector('button[type="submit"]');
+        const btnHtml = submitBtn.innerHTML;
+        const spinnerHtml = 'Processing...';
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = spinnerHtml;
+
+        const msg = yourForm.querySelector('#messages');
+        msg.innerHTML = '';
+
+        // Get all field data from the form
+        let data = new FormData(yourForm);
+        // Convert to an object
+        let formData = serialize(data);
+
+        fetch('/users/form/', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(formData),
+        })
+        .then(response => response.json())
+        .then((res) => {
+            // after we get Celery task id, we start polling
+            const task_id = res.task_id;
+            update_progress(yourForm, task_id, btnHtml);
+            console.log(res);
+        }).catch((error) => {
+          console.error('Error:', error);
+        });
+      });
+    });
+  </script>
+</body>
+</html>
