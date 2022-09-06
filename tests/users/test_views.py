@@ -1,15 +1,13 @@
-from unittest import mock
-
 import requests
-
-from project.users import tasks
+from unittest import mock
+from project.users import users_router, tasks
 from project.users.models import User
 from project.users.factories import UserFactory
 
 
 def test_pytest_setup(client, db_session):
     # test view
-    response = client.get("/users/form/")
+    response = client.get(users_router.url_path_for('form_example_get'))
     assert response.status_code == 200
 
     # test db
@@ -28,7 +26,7 @@ def test_view_with_eager_mode(client, db_session, settings, monkeypatch):
     user_name = "michaelyin"
     user_email = f"{user_name}@accordbox.com"
     response = client.post(
-        "/users/user_subscribe/",
+        users_router.url_path_for('user_subscribe'),
         json={"email": user_email, "username": user_name},
     )
     assert response.status_code == 200
@@ -50,7 +48,7 @@ def test_user_subscribe_view(client, db_session, settings, monkeypatch, user_fac
     monkeypatch.setattr(tasks.task_add_subscribe, "delay", task_add_subscribe)
 
     response = client.post(
-        "/users/user_subscribe/",
+        users_router.url_path_for('user_subscribe'),
         json={"email": user.email, "username": user.username}
     )
 

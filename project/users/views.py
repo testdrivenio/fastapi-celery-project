@@ -48,15 +48,17 @@ def form_example_post(user_body: UserBody):
 @users_router.get("/task_status/")
 def task_status(task_id: str):
     task = AsyncResult(task_id)
-    if task.state == "FAILURE":
+    state = task.state
+
+    if state == 'FAILURE':
         error = str(task.result)
         response = {
-            "state": task.state,
-            "error": error,
+            'state': state,
+            'error': error,
         }
     else:
         response = {
-            "state": task.state,
+            'state': state,
         }
     return JSONResponse(response)
 
@@ -72,8 +74,8 @@ def webhook_test():
     return "pong"
 
 
-@users_router.post("/webhook_test_2/")
-def webhook_test_2():
+@users_router.post("/webhook_test_async/")
+def webhook_test_async():
     task = task_process_notification.delay()
     print(task.id)
     return "pong"
@@ -103,7 +105,7 @@ def transaction_celery(session: Session = Depends(get_db_session)):
         session.rollback()
         raise
 
-    logger.info(f"user {user.id} {user.username} is persistent now")       # new
+    logger.info(f"user {user.id} {user.username} is persistent now")
     task_send_welcome_email.delay(user.id)
     return {"message": "done"}
 

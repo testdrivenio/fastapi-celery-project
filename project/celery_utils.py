@@ -4,7 +4,6 @@ from celery import current_app as current_celery_app, shared_task
 from celery.result import AsyncResult
 from celery.utils.time import get_exponential_backoff_interval
 
-
 from project.config import settings
 
 
@@ -20,7 +19,9 @@ def get_task_info(task_id):
     return task info according to the task_id
     """
     task = AsyncResult(task_id)
-    if task.state == "FAILURE":
+    state = task.state
+
+    if state == "FAILURE":
         error = str(task.result)
         response = {
             "state": task.state,
