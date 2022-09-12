@@ -21,7 +21,7 @@ services:
       - db
 
   db:
-    image: postgres:13-alpine
+    image: postgres:14-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -30,7 +30,7 @@ services:
       - POSTGRES_PASSWORD=fastapi_celery
 
   redis:
-    image: redis:6-alpine
+    image: redis:7-alpine
 
   celery_worker:
     build:
@@ -64,7 +64,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/fastapi/Dockerfile
-    image: fastapi_celery_example_celey_flower
+    image: fastapi_celery_example_celery_flower
     command: /start-flower
     volumes:
       - .:/app

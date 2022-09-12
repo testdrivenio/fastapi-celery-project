@@ -2,16 +2,11 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Celery example</title>
-  <link
-    rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/css/bootstrap.min.css"
-    integrity="sha512-Ez0cGzNzHR1tYAv56860NLspgUGuQw16GiOOp/I2LuTmpSK9xDXlgJz3XN4cnpXWDmkNBKXR/VDMTCnAaEooxA=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/css/bootstrap.min.css"
+        integrity="sha512-XWTTruHZEYJsxV3W/lSXG1n3Q39YIWOstqvmFsdNEEQfHoZ6vm6E9GK2OrF6DSJSpIbRbi+Nn0WDPID9O7xB2Q=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"/>
 </head>
 <body>
   <div class="container">
@@ -33,20 +28,17 @@
     </div>
   </div>
 
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.1/js/bootstrap.min.js"
-    integrity="sha512-EKWWs1ZcA2ZY9lbLISPz8aGR2+L7JVYqBAYTq5AXgBkSjRSuQEGqWx8R1zAX16KdXPaCjOCaKE8MCpU0wcHlHA=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer">
-  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.0/js/bootstrap.min.js"
+          integrity="sha512-8Y8eGK92dzouwpROIppwr+0kPauu0qqtnzZZNEF8Pat5tuRNJxJXCkbQfJ0HlUG3y1HB3z18CSKmUo7i2zcPpg=="
+          crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script
     type="text/javascript"
-    src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.1.3/socket.io.js">
+    src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js">
   </script>
 
   <script>
-    function update_progress(yourForm, task_id, btnHtml) {
+    function updateProgress(yourForm, task_id, btnHtml) {
       // use namespace
       const socket = io('/task_status', {'path': '/ws/socket.io'});
 
@@ -56,7 +48,7 @@
       socket.on('status', function (res) {
         const taskStatus = res.state;
 
-        if (taskStatus !== 'PENDING' && taskStatus !== 'PROGRESS') {
+        if (['SUCCESS', 'FAILURE'].includes(taskStatus)) {
           const msg = yourForm.querySelector('#messages');
           const submitBtn = yourForm.querySelector('button[type="submit"]');
 
@@ -119,7 +111,7 @@
         .then((res) => {
             // after we get Celery task id, we start polling
             const task_id = res.task_id;
-            update_progress(yourForm, task_id, btnHtml);
+            updateProgress(yourForm, task_id, btnHtml);
             console.log(res);
         }).catch((error) => {
           console.error('Error:', error);

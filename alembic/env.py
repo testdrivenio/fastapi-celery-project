@@ -5,9 +5,9 @@ from sqlalchemy import pool
 
 from alembic import context
 
-from project import create_app
-from project.config import settings
-from project.database import Base
+from project import create_app                 # new
+from project.config import settings            # new
+from project.database import Base              # new
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
@@ -15,17 +15,18 @@ config = context.config
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
-fileConfig(config.config_file_name)
+if config.config_file_name is not None:
+    fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
 # from myapp import mymodel
 # target_metadata = mymodel.Base.metadata
-config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))
+config.set_main_option("sqlalchemy.url", str(settings.DATABASE_URL))        # new
 
-fastapi_app = create_app()
+fastapi_app = create_app()    # new
 
-target_metadata = Base.metadata
+target_metadata = Base.metadata       # new
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
@@ -33,7 +34,7 @@ target_metadata = Base.metadata
 # ... etc.
 
 
-def run_migrations_offline():
+def run_migrations_offline() -> None:
     """Run migrations in 'offline' mode.
 
     This configures the context with just a URL
@@ -57,7 +58,7 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def run_migrations_online():
+def run_migrations_online() -> None:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine

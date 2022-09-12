@@ -20,6 +20,7 @@ def test_post_succeed(db_session, monkeypatch, user):
     )
 
 
+
 def test_exception(db_session, monkeypatch, user):
     mock_requests_post = mock.MagicMock()
     monkeypatch.setattr(requests, "post", mock_requests_post)
