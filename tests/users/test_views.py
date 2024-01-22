@@ -40,9 +40,7 @@ def test_view_with_eager_mode(client, db_session, settings, monkeypatch):
     )
 
 
-def test_user_subscribe_view(client, db_session, settings, monkeypatch, user_factory):
-    user = user_factory.build()
-
+def test_user_subscribe_view(client, db_session, settings, monkeypatch, user):
     task_add_subscribe = mock.MagicMock(name="task_add_subscribe")
     task_add_subscribe.return_value = mock.MagicMock(task_id="task_id")
     monkeypatch.setattr(tasks.task_add_subscribe, "delay", task_add_subscribe)
