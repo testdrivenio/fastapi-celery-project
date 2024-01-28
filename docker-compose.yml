@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: ./compose/local/fastapi/Dockerfile
+    image: fastapi_celery_example_web
+    # '/start' is the shell script used to run the service
+    command: /start
+    # this volume is used to map the files and folders on the host to the container
+    # so if we change code on the host, code in the docker container will also be changed
+    volumes:
+      - .:/app
+    ports:
+      - 8010:8000
+    env_file:
+      - .env/.dev-sample
+    depends_on:
+      - redis
+      - db
+
+  db:
+    image: postgres:16-alpine
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=fastapi_celery
+      - POSTGRES_USER=fastapi_celery
+      - POSTGRES_PASSWORD=fastapi_celery
+
+  redis:
+    image: redis:7-alpine
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: ./compose/local/fastapi/Dockerfile
+    image: fastapi_celery_example_celery_worker
+    command: /start-celeryworker
+    volumes:
+      - .:/app
+    env_file:
+      - .env/.dev-sample
+    depends_on:
+      - redis
+      - db
+
+  celery_beat:
+    build:
+      context: .
+      dockerfile: ./compose/local/fastapi/Dockerfile
+    image: fastapi_celery_example_celery_beat
+    command: /start-celerybeat
+    volumes:
+      - .:/app
+    env_file:
+      - .env/.dev-sample
+    depends_on:
+      - redis
+      - db
+
+  flower:
+    build:
+      context: .
+      dockerfile: ./compose/local/fastapi/Dockerfile
+    image: fastapi_celery_example_celery_flower
+    command: /start-flower
+    volumes:
+      - .:/app
+    env_file:
+      - .env/.dev-sample
+    ports:
+      - 5557:5555
+    depends_on:
+      - redis
+      - db
+
+volumes:
+  postgres_data:

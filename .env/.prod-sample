@@ -1,0 +1,11 @@
+FASTAPI_CONFIG=production
+DATABASE_URL=postgresql://fastapi_celery:fastapi_celery@db/fastapi_celery
+CELERY_BROKER_URL=amqp://admin:admin@rabbitmq:5672/
+CELERY_RESULT_BACKEND=redis://redis:6379/0
+WS_MESSAGE_QUEUE=redis://redis:6379/0
+
+RABBITMQ_DEFAULT_USER=admin
+RABBITMQ_DEFAULT_PASS=admin
+
+CELERY_FLOWER_USER=admin
+CELERY_FLOWER_PASSWORD=admin

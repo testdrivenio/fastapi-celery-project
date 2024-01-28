@@ -1,0 +1,33 @@
+[2024-01-28 04:04:44,682: INFO/MainProcess] beat: Starting...
+[2024-01-28 04:04:44,923: WARNING/MainProcess] /usr/local/lib/python3.11/site-packages/celery/app/utils.py:203: CDeprecationWarning: 
+    The 'CELERY_RESULT_BACKEND' setting is deprecated and scheduled for removal in
+    version 6.0.0. Use the result_backend instead
+
+  deprecated.warn(description=f'The {setting!r} setting',
+
+[2024-01-28 04:04:44,924: WARNING/MainProcess] Please run `celery upgrade settings path/to/settings.py` to avoid these warnings and to allow a smoother upgrade to Celery 6.0.
+[2024-01-28 04:04:45,998: WARNING/MainProcess] /usr/local/lib/python3.11/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2024-01-28 04:04:46,008: INFO/MainProcess] Connected to redis://redis:6379/0
+[2024-01-28 04:04:46,009: WARNING/MainProcess] /usr/local/lib/python3.11/site-packages/celery/worker/consumer/consumer.py:507: CPendingDeprecationWarning: The broker_connection_retry configuration setting will no longer determine
+whether broker connection retries are made during startup in Celery 6.0 and above.
+If you wish to retain the existing behavior for retrying connections on startup,
+you should set broker_connection_retry_on_startup to True.
+  warnings.warn(
+
+[2024-01-28 04:04:46,013: INFO/MainProcess] mingle: searching for neighbors
+[2024-01-28 04:04:47,027: INFO/MainProcess] mingle: all alone
+[2024-01-28 04:04:47,045: INFO/MainProcess] celery@1796c238ae8d ready.
+[2024-01-28 04:04:55,323: INFO/MainProcess] Events of group {task} enabled by remote.
+[2024-01-28 04:05:19,474: INFO/MainProcess] Task project.users.tasks.sample_task[72aedca8-a3d0-4eef-baa3-e5799c5d37dd] received
+[2024-01-28 04:05:25,754: INFO/ForkPoolWorker-15] Task project.users.tasks.sample_task[72aedca8-a3d0-4eef-baa3-e5799c5d37dd] succeeded in 6.2770764349843375s: None
+[2024-01-28 04:05:25,757: INFO/ForkPoolWorker-15] Connecting to redis
+[2024-01-28 04:05:25,759: INFO/ForkPoolWorker-15] Redis connection made
+[2024-01-28 04:05:25,760: INFO/ForkPoolWorker-15] Connecting to redis
+[2024-01-28 04:05:25,761: INFO/ForkPoolWorker-15] Redis connection made
+[2024-01-28 04:05:25,768: INFO/ForkPoolWorker-15] Redis connection lost
+[2024-01-28 04:05:25,769: INFO/ForkPoolWorker-15] Redis connection lost
