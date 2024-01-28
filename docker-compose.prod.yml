@@ -91,26 +91,26 @@ services:
       - db
       - rabbitmq
 
-  prometheus:
-    image: prom/prometheus
-    ports:
-      - 9090:9090
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-    volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    depends_on:
-      - cadvisor
-
-  cadvisor:
-    image: gcr.io/cadvisor/cadvisor
-    container_name: cadvisor
-    volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:rw
-      - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+#  prometheus:
+#    image: prom/prometheus
+#    ports:
+#      - 9090:9090
+#    command:
+#      - --config.file=/etc/prometheus/prometheus.yml
+#    volumes:
+#      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+#    depends_on:
+#      - cadvisor
+#
+#  cadvisor:
+#    image: gcr.io/cadvisor/cadvisor
+#    container_name: cadvisor
+#    volumes:
+#      - /:/rootfs:ro
+#      - /var/run:/var/run:rw
+#      - /sys:/sys:ro
+#      - /var/lib/docker/:/var/lib/docker:ro
+#      - /var/run/docker.sock:/var/run/docker.sock:ro
 
 
 volumes:
