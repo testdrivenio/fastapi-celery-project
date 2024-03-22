@@ -3,7 +3,6 @@ import functools
 from celery import current_app as current_celery_app, shared_task
 from celery.result import AsyncResult
 from celery.utils.time import get_exponential_backoff_interval
-
 from project.config import settings
 
 
@@ -66,13 +65,13 @@ class custom_celery_task:
 
     def _get_retry_countdown(self, task_func):
         retry_backoff = int(
-            self.task_kwargs.get("retry_backoff", True)
+            max(1.0, float(self.task_kwargs.get('retry_backoff', True)))
         )
         retry_backoff_max = int(
-            self.task_kwargs.get("retry_backoff_max", 600)
+            self.task_kwargs.get('retry_backoff_max', 600)
         )
         retry_jitter = self.task_kwargs.get(
-            "retry_jitter", True
+            'retry_jitter', True
         )
 
         countdown = get_exponential_backoff_interval(

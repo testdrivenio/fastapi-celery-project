@@ -16,9 +16,9 @@ prepend_sys_path = .
 
 # timezone to use when rendering the date within the migration file
 # as well as the filename.
-# If specified, requires the python-dateutil library that can be
-# installed by adding `alembic[tz]` to the pip requirements
-# string value is passed to dateutil.tz.gettz()
+# If specified, requires the python>=3.9 or backports.zoneinfo library.
+# Any required deps can installed by adding `alembic[tz]` to the pip requirements
+# string value is passed to ZoneInfo()
 # leave blank for localtime
 # timezone =
 
@@ -51,6 +51,11 @@ prepend_sys_path = .
 # version_path_separator = space
 version_path_separator = os  # Use os.pathsep. Default configuration used for new projects.
 
+# set to 'true' to search source files recursively
+# in each "version_locations" directory
+# new in Alembic version 1.10
+# recursive_version_locations = false
+
 # the output encoding used when revision files
 # are written from script.py.mako
 # output_encoding = utf-8
@@ -68,6 +73,12 @@ sqlalchemy.url = driver://user:pass@localhost/dbname
 # black.type = console_scripts
 # black.entrypoint = black
 # black.options = -l 79 REVISION_SCRIPT_FILENAME
+
+# lint with attempts to fix using "ruff" - use the exec runner, execute a binary
+# hooks = ruff
+# ruff.type = exec
+# ruff.executable = %(here)s/.venv/bin/ruff
+# ruff.options = --fix REVISION_SCRIPT_FILENAME
 
 # Logging configuration
 [loggers]

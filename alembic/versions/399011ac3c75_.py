@@ -1,19 +1,21 @@
 """empty message
 
-Revision ID: 512d31e06401
+Revision ID: 399011ac3c75
 Revises: 
-Create Date: 2022-08-20 15:48:24.413643
+Create Date: 2024-01-04 15:58:51.354365
 
 """
+from typing import Sequence, Union
+
 from alembic import op
 import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '512d31e06401'
-down_revision = None
-branch_labels = None
-depends_on = None
+revision: str = '399011ac3c75'
+down_revision: Union[str, None] = None
+branch_labels: Union[str, Sequence[str], None] = None
+depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:

@@ -12,7 +12,7 @@ def test_task_generate_avatar_thumbnail(db_session, settings, member):
     assert not member.avatar_thumbnail
 
     generate_avatar_thumbnail(member.id)
-    member = db_session.query(Member).get(member.id)
+    member = db_session.get(Member, member.id)
 
     assert member.avatar_thumbnail
 

@@ -93,17 +93,13 @@ def form_socketio_example(request: Request):
 
 @users_router.get("/transaction_celery/")
 def transaction_celery(session: Session = Depends(get_db_session)):
-    try:
-        username = random_username()
-        user = User(
-            username=f"{username}",
-            email=f"{username}@test.com",
-        )
+    username = random_username()
+    user = User(
+        username=f'{username}',
+        email=f'{username}@test.com',
+    )
+    with session.begin():
         session.add(user)
-        session.commit()
-    except Exception as e:
-        session.rollback()
-        raise
 
     logger.info(f"user {user.id} {user.username} is persistent now")
     task_send_welcome_email.delay(user.id)
@@ -115,23 +111,15 @@ def user_subscribe(
         user_body: UserBody,
         session: Session = Depends(get_db_session)
 ):
-    try:
+    with session.begin():
         user = session.query(User).filter_by(
             username=user_body.username
         ).first()
-        if user:
-            user_id = user.id
-        else:
+        if not user:
             user = User(
                 username=user_body.username,
                 email=user_body.email,
             )
             session.add(user)
-            session.commit()
-            user_id = user.id
-    except Exception as e:
-        session.rollback()
-        raise
-
-    task_add_subscribe.delay(user_id)
+    task_add_subscribe.delay(user.id)
     return {"message": "send task to Celery successfully"}

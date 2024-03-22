@@ -1,7 +1,6 @@
 import os
 import pathlib
 from functools import lru_cache
-
 from kombu import Queue
 
 
@@ -14,7 +13,6 @@ def route_task(name, args, kwargs, options, task=None, **kw):
 
 class BaseConfig:
     BASE_DIR: pathlib.Path = pathlib.Path(__file__).parent.parent
-    UPLOADS_DEFAULT_DEST: str = str(BASE_DIR / "upload")
 
     DATABASE_URL: str = os.environ.get("DATABASE_URL", f"sqlite:///{BASE_DIR}/db.sqlite3")
     DATABASE_CONNECT_DICT: dict = {}
@@ -45,6 +43,8 @@ class BaseConfig:
     )
 
     CELERY_TASK_ROUTES = (route_task,)
+
+    UPLOADS_DEFAULT_DEST: str = str(BASE_DIR / "upload")
 
 
 class DevelopmentConfig(BaseConfig):

@@ -29,7 +29,7 @@ services:
       - rabbitmq
 
   db:
-    image: postgres:14-alpine
+    image: postgres:16-alpine
     volumes:
       - postgres_data:/var/lib/postgresql/data/
     environment:
@@ -111,6 +111,7 @@ services:
 #      - /sys:/sys:ro
 #      - /var/lib/docker/:/var/lib/docker:ro
 #      - /var/run/docker.sock:/var/run/docker.sock:ro
+
 
 volumes:
   postgres_data:

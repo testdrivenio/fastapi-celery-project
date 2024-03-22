@@ -11,7 +11,7 @@ from project.tdd.models import Member
 @shared_task(name="generate_avatar_thumbnail")
 def generate_avatar_thumbnail(member_pk):
     with db_context() as session:
-        member = session.query(Member).get(member_pk)
+        member = session.get(Member, member_pk)
 
         full_path = os.path.join(
             settings.UPLOADS_DEFAULT_DEST,

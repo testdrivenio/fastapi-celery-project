@@ -5,4 +5,3 @@ class UserBody(BaseModel):
 
     username: str
     email: str
-

@@ -12,7 +12,7 @@ from project.users.models import User
 @custom_celery_task()
 def successful_task(user_id):
     with db_context() as session:
-        user = session.query(User).get(user_id)
+        user = session.get(User, user_id)
         user.username = "test"
         session.commit()
 
@@ -34,7 +34,7 @@ def test_custom_celery_task(db_session, settings, user, monkeypatch):
 
     successful_task.delay(user.id)
 
-    assert db_session.query(User).get(user.id).username == "test"
+    assert db_session.get(User, user.id).username == "test"
 
 
 def test_throwing_no_retry_task(settings, monkeypatch):

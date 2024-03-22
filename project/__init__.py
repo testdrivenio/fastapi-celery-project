@@ -1,3 +1,4 @@
+from contextlib import asynccontextmanager
 from broadcaster import Broadcast
 from fastapi import FastAPI
 
@@ -6,8 +7,15 @@ from project.config import settings
 broadcast = Broadcast(settings.WS_MESSAGE_QUEUE)
 
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await broadcast.connect()
+    yield
+    await broadcast.disconnect()
+
+
 def create_app() -> FastAPI:
-    app = FastAPI()
+    app = FastAPI(lifespan=lifespan)
 
     from project.logging import configure_logging
     configure_logging()
@@ -27,14 +35,6 @@ def create_app() -> FastAPI:
 
     from project.ws.views import register_socketio_app
     register_socketio_app(app)
-
-    @app.on_event("startup")
-    async def startup_event():
-        await broadcast.connect()
-
-    @app.on_event("shutdown")
-    async def shutdown_event():
-        await broadcast.disconnect()
 
     @app.get("/")
     async def root():

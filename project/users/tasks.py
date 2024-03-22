@@ -6,9 +6,10 @@ from asgiref.sync import async_to_sync
 from celery import shared_task
 from celery.signals import task_postrun
 from celery.utils.log import get_task_logger
-from project.database import db_context
 from celery.signals import after_setup_logger
+from project.database import db_context
 from project.celery_utils import custom_celery_task
+
 
 logger = get_task_logger(__name__)
 
@@ -73,7 +74,7 @@ def task_send_welcome_email(user_pk):
     from project.users.models import User
 
     with db_context() as session:
-        user = session.query(User).get(user_pk)
+        user = session.get(User, user_pk)
         logger.info(f'send email to {user.email} {user.id}')
 
 
@@ -96,7 +97,7 @@ def task_add_subscribe(self, user_pk):
         try:
             from project.users.models import User
 
-            user = session.query(User).get(user_pk)
+            user = session.get(User, user_pk)
             requests.post(
                 "https://httpbin.org/delay/5",
                 data={"email": user.email},

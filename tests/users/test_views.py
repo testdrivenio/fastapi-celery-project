@@ -2,7 +2,6 @@ import requests
 from unittest import mock
 from project.users import users_router, tasks
 from project.users.models import User
-from project.users.factories import UserFactory
 
 
 def test_pytest_setup(client, db_session):
@@ -12,8 +11,8 @@ def test_pytest_setup(client, db_session):
 
     # test db
     user = User(username="test", email="test@example.com")
-    db_session.add(user)
-    db_session.commit()
+    with db_session.begin():
+        db_session.add(user)
     assert user.id
 
 

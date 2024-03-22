@@ -11,7 +11,6 @@ from project.tdd.factories import MemberFactory
 register(UserFactory)
 register(MemberFactory)
 
-
 @pytest.fixture
 def settings():
     from project.config import settings as _settings
